@@ -1,4 +1,4 @@
-const User = require("../models/user.model")
+const User = require("../../models/user.model")
 
 class Users {
   async createUser (req, res) {
@@ -6,26 +6,46 @@ class Users {
     try {
       await user.save()
       const token = await user.generateAuthToken()
-      res.status(200).send({
-        user,
-        token
+      res.status(201).send({
+        data: {
+          user,
+          token
+        },
+        message: 'User created successfully',
+        success: true
       })
     } catch (error) {
-      res.status(400).send(error)
+      res.status(400).send({
+        message: 'User not created',
+        success: false,
+        error
+      })
     }
   }
 
   async getUsers (req, res) {
     try {
       const users = await User.find({})
-      res.status(200).send(users)
+      res.status(200).send({
+        data: users,
+        message: 'Users fetched successfully',
+        success: true
+      })
     }catch (error) {
-      res.status(500).send()
+      res.status(500).send({
+        message: 'Users not fetched',
+        success: false,
+        error
+      })
     }
   }
 
   async getCurrentUser (req, res) {
-   res.status(200).send(req.user)
+    res.status(200).send({
+      data: req.user,
+      message: 'User fetched successfully',
+      success: true
+   })
   }
 
   async getUser (req, res) {
@@ -37,9 +57,17 @@ class Users {
           message: 'user not found'
         })
       }
-      res.status(200).send(user)
+      res.status(200).send({
+        data: user,
+        message: 'User fetched successfully',
+        success: true
+      })
     }catch(error) {
-      res.status(500).send()
+      res.status(500).send({
+        message: 'User not fetched',
+        success: false,
+        error
+      })
     }
   }
 
@@ -74,9 +102,20 @@ class Users {
 
   async updateUser (req, res) {
     const _id = req.user._id
+    const userToUpdateId = request.params.id
+    
+    if(_id !== userToUpdateId) {
+      return res.status(403).send({
+        message: 'You are not authorized to update this user',
+        status_code: 401,
+        success: false
+      })
+    }
+
     const updates = Object.keys(req.body)
     const allowedUpdateArray = ['name', 'email', 'password', 'age']
     const isValidOperation = updates.every(update => allowedUpdateArray.includes(update))
+    
     if(!isValidOperation) {
       return res.status(400).send({error: 'Invalid updates!' })
     }
