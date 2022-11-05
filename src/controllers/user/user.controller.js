@@ -54,7 +54,8 @@ class Users {
       const user = await User.findById(_id)
       if(!user) {
         return res.status(404).send({
-          message: 'user not found'
+          message: 'user not found',
+          success: false
         })
       }
       res.status(200).send({
@@ -73,12 +74,19 @@ class Users {
 
   async updateUser (req, res) {
     const _id = req.user._id
+
     const userToUpdateId = request.params.id
+
+    if(!userToUpdateId) {
+      return res.status(404).send({
+        message: 'user not found',
+        success: false
+      })
+    }
     
     if(_id !== userToUpdateId) {
       return res.status(403).send({
         message: 'You are not authorized to update this user',
-        status_code: 401,
         success: false
       })
     }
@@ -90,18 +98,17 @@ class Users {
     if(!isValidOperation) {
       return res.status(400).send({error: 'Invalid updates!' })
     }
+    
     try {
       const user = await User.findById(_id)
       if(!user) {
         return res.status(404).send({
           message: 'user not found',
-          status_code: 404,
           success: false
         })
       }
 
       updates.forEach((update) =>  user[update] = req.body[update])
-
       await user.save()
 
       res.status(200).send(user)

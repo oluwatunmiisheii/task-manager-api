@@ -1,5 +1,6 @@
 const Task = require("../../models/task.model")
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const { response } = require("express");
 
 class Tasks {
   async createTask (req, res) {
@@ -82,12 +83,22 @@ class Tasks {
 
   async updateTask (req, res) {
     const _id = req.params.id
+    if(!_id) {
+      return res.status(404).send({
+        error: 'Invalid updates!', 
+        success: false 
+      })
+    }
+    
     const updates = Object.keys(req.body)
     const allowedUpdateArray = ['description', 'completed']
     const isValidOperation = updates.every(update => allowedUpdateArray.includes(update))
 
     if(!isValidOperation) {
-      return res.status(400).send({error: 'Invalid updates!' })
+      return res.status(400).send({
+        error: 'Invalid updates!', 
+        success: false 
+      })
     }
 
     try {

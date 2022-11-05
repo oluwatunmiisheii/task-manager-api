@@ -18,7 +18,11 @@ const port = process.env.PORT || 4500
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
-app.use("/api/", userRouter)
+
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+app.use("/api/users", userRouter)
 app.use("/api/", taskRouter)
 app.use("/api/", authRouter)
 

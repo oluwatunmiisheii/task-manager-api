@@ -1,16 +1,16 @@
 const express = require('express')
 const userController = require("../controllers/user/user.controller")
 const userRouter = new express.Router()
-const authMiddleware = require("../middleware/auth")
+const authMiddleware = require("../middleware/auth.middleware")
+const schema = require("../validations")
+const validatorMiddleware = require("../middleware/validator.middleware")
 
-userRouter.post('/users',  userController.createUser)
-userRouter.get('/users', authMiddleware, userController.getUsers)
-userRouter.get('/users/me', authMiddleware, userController.getCurrentUser)
-userRouter.get('/users/:id', authMiddleware, userController.getUser)
-userRouter.patch('/admin/users/:id', authMiddleware, userController.adminUpdateUser)
-userRouter.patch('/users/:id', authMiddleware, userController.updateUser)
-userRouter.delete('/admin/users/:id', authMiddleware, userController.adminDeleteUser)
-userRouter.delete('/users/me', authMiddleware, userController.deleteUser)
+userRouter.post('/', [authMiddleware, validatorMiddleware(schema.register, 'body')],  userController.createUser)
+userRouter.get('/me', authMiddleware, userController.getCurrentUser)
+userRouter.delete('/me', authMiddleware, userController.deleteUser)
+userRouter.get('/:id', [authMiddleware, validatorMiddleware(schema.getUser, 'params')], userController.getUser)
+userRouter.patch('/:id', authMiddleware, userController.updateUser)
+userRouter.get('/', authMiddleware, userController.getUsers)
 
 
 module.exports = userRouter
