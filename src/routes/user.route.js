@@ -10,7 +10,7 @@ userRouter.get('/users/:id', authMiddleware, userController.getUser)
 userRouter.patch('/admin/users/:id', authMiddleware, userController.adminUpdateUser)
 userRouter.patch('/users/:id', authMiddleware, userController.updateUser)
 userRouter.delete('/admin/users/:id', authMiddleware, userController.adminDeleteUser)
-userRouter.delete('/users/me', authMiddleware, userController.adminDeleteUser)
+userRouter.delete('/users/me', authMiddleware, userController.deleteUser)
 
 
 module.exports = userRouter

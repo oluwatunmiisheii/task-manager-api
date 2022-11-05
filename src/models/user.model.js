@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
+const Task = require('./task.model')
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -94,6 +95,13 @@ userSchema.statics.findByCredentials = async (email, password) => {
 
   return user
 }
+
+// delete user tasks when user is removed
+userSchema.pre('remove', async function (next) {
+  const user = this
+  await Task.deleteMany({ owner: user._id })
+  next()
+})
 
 const User = mongoose.model('User', userSchema)
 
