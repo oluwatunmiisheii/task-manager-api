@@ -74,7 +74,7 @@ class Tasks {
             meta: [{ $count: "total" }, { $addFields: { page } }],
             data: [{ $skip: skip }, { $limit: limit }],
           },
-        }
+        },
         // {
         //   $project: {
         //     description: 1,
@@ -98,7 +98,8 @@ class Tasks {
       res.status(200).send({
         message: "Tasks fetched successfully",
         success: true,
-        data: tasks,
+        data: tasks[0].data || [],
+        meta: tasks[0].meta[0] || {},
       });
     } catch (error) {
       res.status(500).send({
