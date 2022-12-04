@@ -1,11 +1,13 @@
 const User = require("../../models/user.model")
 const sharp = require('sharp')
+const { sendWelcomeEmail } = require("../../emails/account.email")
 
 class Users {
   async createUser (req, res) {
     const user = new User(req.body)
     try {
       await user.save()
+      sendWelcomeEmail(user.email, user.name)
       const token = await user.generateAuthToken()
       res.status(201).send({
         data: {
