@@ -18,6 +18,7 @@ class Users {
         success: true
       })
     } catch (error) {
+      console.log("🚀 ~ file: user.controller.js:21 ~ Users ~ createUser ~ error", error)
       res.status(400).send({
         message: 'User not created',
         success: false,

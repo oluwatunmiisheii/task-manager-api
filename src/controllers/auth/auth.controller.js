@@ -5,17 +5,21 @@ class Auth {
     const { email, password } = req.body
     try {
       const user = await User.findByCredentials(email, password)
+      if(!user) {
+        throw new Error()
+      }
       const token = await user.generateAuthToken()
       res.status(200).send({
-        data: user,
+        data: {
+          user,
+          token
+        },
         message: 'User logged in successfully',
-        token,
       })
     } catch (error) {
       res.status(400).send({
         message: 'Unable to login',
         success: false,
-        error
       })
     }
   }
