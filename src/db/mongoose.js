@@ -1,8 +1,20 @@
 const mongoose = require('mongoose')
-const connectionUrl = process.env.MONGODB_URL || "mongodb://localhost:27017/task-manager-api"
+require('dotenv').config();
+
+const {
+  MONGODB_DB_URL_TEST,
+  MONGODB_DB_URL
+} = process.env
+
+const connectionUrl = process.env.NODE_ENV === 'test' ? MONGODB_DB_URL_TEST : MONGODB_DB_URL
+
 mongoose.connect(connectionUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
   useCreateIndex: true
+}).then(() => {
+  console.log('Connected to database')
+}).catch((error) => {
+  console.log('Error connecting to database', error)
 });
