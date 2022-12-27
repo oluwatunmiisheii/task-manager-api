@@ -7,7 +7,7 @@
     "start": "nodemon src/index.js",
     "dev": "nodemon src/index.js",
     "nuke": "rm -rf node_modules; rm package-lock.json; npm install",
-    "test": "jest --watch"
+    "test": "jest --watch --runInBand"
   },
   "jest": {
     "testEnv": "node"

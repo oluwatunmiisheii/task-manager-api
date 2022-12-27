@@ -18,7 +18,6 @@ class Users {
         success: true
       })
     } catch (error) {
-      console.log("🚀 ~ file: user.controller.js:21 ~ Users ~ createUser ~ error", error)
       res.status(400).send({
         message: 'User not created',
         success: false,
@@ -78,22 +77,6 @@ class Users {
 
   async updateUser (req, res) {
     const _id = req.user._id
-
-    const userToUpdateId = request.params.id
-
-    if(!userToUpdateId) {
-      return res.status(404).send({
-        message: 'user not found',
-        success: false
-      })
-    }
-    
-    if(_id !== userToUpdateId) {
-      return res.status(403).send({
-        message: 'You are not authorized to update this user',
-        success: false
-      })
-    }
 
     const updates = Object.keys(req.body)
     const allowedUpdateArray = ['name', 'email', 'password', 'age']

@@ -98,8 +98,8 @@ class Tasks {
       res.status(200).send({
         message: "Tasks fetched successfully",
         success: true,
-        data: tasks[0].data || [],
-        meta: tasks[0].meta[0] || {},
+        data: tasks[0].data,
+        meta: tasks[0].meta[0],
       });
     } catch (error) {
       res.status(500).send({

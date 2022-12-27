@@ -1,30 +1,11 @@
 const request = require('supertest')
 const app = require('../src/app')
 const User = require("../src/models/user.model")
-const jwt = require('jsonwebtoken')
-const mongoose = require('mongoose')
+const { userOne, setupDatabase, closeDbConnection } = require('./fixtures/db.fixtures')
 
+beforeEach(setupDatabase)
 
-const userOneId = new mongoose.Types.ObjectId()
-const userOne = {
-  _id: userOneId,
-  name: "Mike",
-  email: "oluwatunmiseadenuga95@gmail.com",
-  password: "123456789",
-  tokens: [{
-    token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET)
-  }]
-}
-
-beforeEach(async () => {
-  await User.deleteMany()
-  await new User(userOne).save()
-})
-
-
-afterAll(async () => {
-  await mongoose.connection.close()
-})
+afterAll(closeDbConnection)
 
 
 describe("User", () => {
@@ -50,7 +31,7 @@ describe("User", () => {
   })
 
   test("should not save plain password", async () => {
-    const user = await User.findOne({_id: userOneId})
+    const user = await User.findOne({_id: userOne._id})
     expect(user.password).not.toBe("123456789")
   })
   
@@ -73,38 +54,5 @@ describe("User", () => {
       "message": "Unable to login",
       "success": false
     })
-  })
-  
-  test("should get profile for user", async () => {
-    await request(app)
-      .get('/api/users/me')
-      .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
-      .send()
-      .expect(200)
-  })
-  
-  test("should not get profile for unauthenticated user", async () => {
-    await request(app)
-      .get('/api/users/me')
-      .send()
-      .expect(401)
-  })
-
-  test("should delete account for user", async () => {
-    await request(app)
-      .delete('/api/users/me')
-      .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
-      .send()
-      .expect(200)
-
-    const user = await User.findById(userOne.id)
-    expect(user).toBeNull()
-  })
-
-  test("should not delete account for unauthenticated user", async () => {
-    await request(app)
-      .delete('/api/users/me')
-      .send()
-      .expect(401)
   })
 })
